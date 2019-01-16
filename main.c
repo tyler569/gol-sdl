@@ -7,15 +7,25 @@
 #include "basic.h"
 
 
-const int screen_x = 1000;
-const int screen_y = 680;
-const int cell_x = 20;
-const int cell_y = 20;
-const int board_x = screen_x / cell_x;
-const int board_y = screen_y / cell_y;
-//const int board_size = board_x * board_y;
+// const int SCREEN_X = 1000;
+// const int SCREEN_Y = 680;
+// const int CELL_X = 20;
+// const int CELL_Y = 20;
+// const int BOARD_X = SCREEN_X / CELL_X;
+// const int BOARD_Y = SCREEN_Y / CELL_Y;
+// //const int board_size = BOARD_X * BOARD_Y;
+// 
+// bool board[1000/20][680/20];
 
-bool board[board_x][board_y];
+#define SCREEN_X 1000
+#define SCREEN_Y 680
+#define CELL_X   20
+#define CELL_Y   20
+
+#define BOARD_X  (SCREEN_X / CELL_X)
+#define BOARD_Y  (SCREEN_Y / CELL_Y)
+
+bool board[BOARD_X][BOARD_Y];
 
 
 struct pair {
@@ -24,20 +34,20 @@ struct pair {
 typedef struct pair Pair;
 
 Pair coord_to_cell(int x, int y) {
-    Pair p = { x/cell_x, y/cell_y };
+    Pair p = { x/CELL_X, y/CELL_Y };
     return p;
 }
 
-void render_gol(SDL_Surface *s, bool b[board_x][board_y]) {
+void render_gol(SDL_Surface *s, bool b[BOARD_X][BOARD_Y]) {
     SDL_Rect rect = {0};
 
-    for (usize i=0; i<board_x; i++) {
-        for (usize j=0; j<board_y; j++) {
+    for (usize i=0; i<BOARD_X; i++) {
+        for (usize j=0; j<BOARD_Y; j++) {
 
-            rect.x = i * cell_x;
-            rect.y = j * cell_y;
-            rect.w = cell_x;
-            rect.h = cell_y;
+            rect.x = i * CELL_X;
+            rect.y = j * CELL_Y;
+            rect.w = CELL_X;
+            rect.h = CELL_Y;
 
             if (b[i][j]) {
                 SDL_FillRect(s, &rect, SDL_MapRGB(s->format, 0x80, 0x80, 0x80));
@@ -60,7 +70,7 @@ int wrap(int v, int total) {
     }
 }
 
-bool next(bool (*b)[board_x][board_y], int x, int y) {
+bool next(bool (*b)[BOARD_X][BOARD_Y], int x, int y) {
     usize count = 0;
 
     for (isize i=-1; i<=1; i++) {
@@ -69,8 +79,8 @@ bool next(bool (*b)[board_x][board_y], int x, int y) {
                 continue;
             }
 
-            int x_coord = wrap(x+i, board_x);
-            int y_coord = wrap(y+j, board_y);
+            int x_coord = wrap(x+i, BOARD_X);
+            int y_coord = wrap(y+j, BOARD_Y);
 
             if ((*b)[x_coord][y_coord]) {
                 count += 1;
@@ -82,19 +92,19 @@ bool next(bool (*b)[board_x][board_y], int x, int y) {
     return false;
 }
 
-void advance_gol(bool b[board_x][board_y]) {
-    bool scratch[board_x][board_y] = {{false}};
+void advance_gol(bool b[BOARD_X][BOARD_Y]) {
+    bool scratch[BOARD_X][BOARD_Y] = {{false}};
 
-    for (usize i=0; i<board_x; i++) {
-        for (usize j=0; j<board_y; j++) {
+    for (usize i=0; i<BOARD_X; i++) {
+        for (usize j=0; j<BOARD_Y; j++) {
             scratch[i][j] = next(&board, i, j);
         }
     }
-    memmove(b, scratch, sizeof(bool[board_x][board_y]));
+    memmove(b, scratch, sizeof(bool[BOARD_X][BOARD_Y]));
 }
 
-void reset_gol(bool b[board_x][board_y]) {
-    memset(b, false, sizeof(bool[board_x][board_y]));
+void reset_gol(bool b[BOARD_X][BOARD_Y]) {
+    memset(b, false, sizeof(bool[BOARD_X][BOARD_Y]));
 
     /*
     b[20][30] = true;
@@ -121,7 +131,7 @@ int main() {
         return 1;
     }
 
-    window = SDL_CreateWindow("GOL",  SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, screen_x, screen_y, SDL_WINDOW_SHOWN );
+    window = SDL_CreateWindow("GOL",  SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_X, SCREEN_Y, SDL_WINDOW_SHOWN );
     if (window == NULL) {
         printf("window SDL_Error: %s\n", SDL_GetError());
         return 2;

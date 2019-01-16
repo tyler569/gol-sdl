@@ -1,13 +1,15 @@
 
+CC = gcc
+
 all:
-	clang main.c -O0 -Wall -lsdl2
+	$(CC) main.c -O0 -Wall -lSDL2
 
 asan:
-	clang main.c -O0 -g -Wall -fsanitize=address -lsdl2
+	$(CC) main.c -O0 -g -Wall -fsanitize=address -lSDL2
 
 debug:
-	clang main.c -O0 -g -Wall -lsdl2
+	$(CC) main.c -O0 -g -Wall -lSDL2
 
 release:
-	clang main.c -O3 -Wall -lsdl2
+	$(CC) main.c -O3 -Wall -lSDL2
 
